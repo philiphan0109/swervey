@@ -11,7 +11,9 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ModuleConstants;
 import frc.robot.utils.Kraken;
@@ -78,8 +80,24 @@ public class SwerveModule extends SubsystemBase {
     return new SwerveModuleState(driveMotor.getMPS(), new Rotation2d(getCANCoderReading()));
   }
 
+  public SwerveModulePosition getPosition(){
+    return new SwerveModulePosition(driveMotor.getPosition() * ModuleConstants.kDriveEncoderPositionFactor, new Rotation2d(getCANCoderReading()));
+  }
+
   public void setDesiredState(SwerveModuleState desiredModuleState){
     desiredState = desiredModuleState;
+
+    SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState, new Rotation2d(getCANCoderReading()));
+
+    double desiredVelocity = optimizedDesiredState.speedMetersPerSecond;
+    double desiredAngle = optimizedDesiredState.angle.getRadians() / (2 * Math.PI);
+
+    SmartDashboard.putNumber(drivingCANId + " optimized desired velocity", desiredVelocity);
+    SmartDashboard.putNumber(steerCANId + " optimized desired angle", desiredAngle);
+    SmartDashboard.putNumber(CANCoderId + " cancoder position", getCANCoderReading());
+
+    driveMotor.setVelocityWithFeedForward(desiredVelocity);
+    steerMotor.setPositionWithFeedForward(desiredAngle);
   }
 
 
