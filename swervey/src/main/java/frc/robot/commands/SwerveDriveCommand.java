@@ -34,7 +34,7 @@ public class SwerveDriveCommand extends Command {
     Translation2d translation = oi.getSwerveTranslation();
     double rotation = oi.getRotation();
 
-    drivetrain.drive(translation, rotation, true, new Translation2d(0, 0));
+    drivetrain.drive(new Translation2d(0, 0), rotation, true, new Translation2d(0, 0));
   }
 
   // Called once the command ends or is interrupted.

@@ -9,13 +9,15 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.ModuleConstants;
+import frc.robot.utils.Constants.DriveConstants;
+import frc.robot.utils.Constants.ModuleConstants;
 import frc.robot.utils.Kraken;
 
 public class SwerveModule extends SubsystemBase {
@@ -50,6 +52,9 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.setBrake();
     steerMotor.setBrake();
 
+    driveMotor.setClosedLoopRampRate(0.1);
+    steerMotor.setClosedLoopRampRate(0.1);
+
     driveMotor.setEncoder(0);
     steerMotor.setEncoder(0);
 
@@ -62,6 +67,11 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.setVelocityConversionFactor(ModuleConstants.kDriveEncoderVelocityFactor);
     steerMotor.setRotorToSensorRatio(ModuleConstants.kSteerMotorReduction);
     steerMotor.setSensorToMechanismRatio(1.0);
+
+    driveMotor.setVelocityPIDValues(ModuleConstants.kDriveS, ModuleConstants.kDriveV, ModuleConstants.kDriveA, 
+                                    ModuleConstants.kDriveP, ModuleConstants.kDriveI, ModuleConstants.kDriveD, ModuleConstants.kDriveFF);
+    steerMotor.setVelocityPIDValues(ModuleConstants.kSteerS, ModuleConstants.kSteerV, ModuleConstants.kSteerA, 
+                                    ModuleConstants.kSteerP, ModuleConstants.kSteerI, ModuleConstants.kSteerD, ModuleConstants.kSteerFF, StaticFeedforwardSignValue.UseClosedLoopSign);
   }
 
   public void configureCANCoder(){
@@ -104,6 +114,7 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber(CANCoderId + " CANCoder Reading", getCANCoderReading());
   }
 
   @Override

@@ -13,7 +13,9 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.DriveConstants;
+import frc.robot.Robot;
+import frc.robot.utils.RobotMap;
+import frc.robot.utils.Constants.DriveConstants;
 
 public class Drivetrain extends SubsystemBase {
   private static Drivetrain instance;
@@ -29,16 +31,16 @@ public class Drivetrain extends SubsystemBase {
 
 
   public Drivetrain() {
-    frontLeftModule = new SwerveModule("temp", 0, 0, 0, 0);
-    frontRightModule = new SwerveModule("temp", 0, 0, 0, 0);
-    backLeftModule = new SwerveModule("temp", 0, 0, 0, 0);
-    backRightModule = new SwerveModule("temp", 0, 0, 0, 0);
+    frontLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_LEFT_MODULE_DRIVE_ID, RobotMap.FRONT_LEFT_MODULE_TURN_ID, RobotMap.FRONT_LEFT_MODULE_CANCODER_ID, 0);
+    frontRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_RIGHT_MODULE_DRIVE_ID, RobotMap.FRONT_RIGHT_MODULE_TURN_ID, RobotMap.FRONT_RIGHT_MODULE_CANCODER_ID, 0);
+    backLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_LEFT_MODULE_DRIVE_ID, RobotMap.BACK_LEFT_MODULE_TURN_ID, RobotMap.BACK_LEFT_MODULE_CANCODER_ID, 0);
+    backRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_RIGHT_MODULE_DRIVE_ID, RobotMap.BACK_RIGHT_MODULE_TURN_ID, RobotMap.BACK_RIGHT_MODULE_CANCODER_ID, 0);
 
     swerveModules = new SwerveModule[] {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
     swerveModulePositions = new SwerveModulePosition[] {frontLeftModule.getPosition(), frontRightModule.getPosition(), backLeftModule.getPosition(), backRightModule.getPosition()};
     swerveModuleStates = DriveConstants.kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0));
 
-    gyro = new Pigeon2(0);
+    gyro = new Pigeon2(RobotMap.GYRO_ID, RobotMap.CANIVORE_NAME);
     gyro.setYaw(0);
   }
 
