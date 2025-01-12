@@ -33,15 +33,15 @@ public final class Constants {
 
     public static final double kSteerMotorReduction = 150.0 / 7.0;
 
-    public static final double kDriveS = 0.0;
-    public static final double kDriveV = 0.0;
+    public static final double kDriveS = 0.5;
+    public static final double kDriveV = 0.12;
     public static final double kDriveA = 0.0;
-    public static final double kDriveP = 0.0;
+    public static final double kDriveP = 0.5;
     public static final double kDriveI = 0.0;
     public static final double kDriveD = 0.0;
     public static final double kDriveFF = 0.0;
 
-    public static final double kSteerS = 0.2;
+    public static final double kSteerS = 0.13;
     public static final double kSteerV = 0.0;
     public static final double kSteerA = 0.0;
     public static final double kSteerP = 135.0;

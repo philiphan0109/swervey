@@ -6,7 +6,6 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
@@ -16,7 +15,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utils.Constants.DriveConstants;
 import frc.robot.utils.Constants.ModuleConstants;
 import frc.robot.utils.Kraken;
 
@@ -76,7 +74,9 @@ public class SwerveModule extends SubsystemBase {
 
   public void configureCANCoder(){
     CANcoderConfiguration config = new CANcoderConfiguration();
-    config.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
+    config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5; // Setting this to 1 makes the absolute position unsigned [0, 1)
+                                                                // Setting this to 0.5 makes the absolute position signed [-0.5, 0.5)
+                                                                // Setting this to 0 makes the absolute position always negative [-1, 0)
     config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     config.MagnetSensor.MagnetOffset = -moduleAngularOffset/ (2 * Math.PI);
     canCoder.getConfigurator().apply(config);
@@ -96,11 +96,10 @@ public class SwerveModule extends SubsystemBase {
 
   public void setDesiredState(SwerveModuleState desiredModuleState){
     desiredState = desiredModuleState;
+    desiredState.optimize(new Rotation2d(getCANCoderReading()));
 
-    SwerveModuleState optimizedDesiredState = SwerveModuleState.optimize(desiredState, new Rotation2d(getCANCoderReading()));
-
-    double desiredVelocity = optimizedDesiredState.speedMetersPerSecond;
-    double desiredAngle = optimizedDesiredState.angle.getRadians() / (2 * Math.PI);
+    double desiredVelocity = desiredState.speedMetersPerSecond;
+    double desiredAngle = desiredState.angle.getRadians() / (2 * Math.PI);
 
     SmartDashboard.putNumber(drivingCANId + " optimized desired velocity", desiredVelocity);
     SmartDashboard.putNumber(steerCANId + " optimized desired angle", desiredAngle);

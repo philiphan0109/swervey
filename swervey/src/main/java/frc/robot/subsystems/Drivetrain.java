@@ -64,7 +64,7 @@ public class Drivetrain extends SubsystemBase {
   }
 
   public double getHeading(){
-    heading = gyro.getAngle();
+    heading = -gyro.getYaw().getValueAsDouble();
     return Math.IEEEremainder(heading, 360);
   }
 
@@ -90,8 +90,7 @@ public class Drivetrain extends SubsystemBase {
 
   public void optimizeModuleStates(){
     for(int i = 0; i < swerveModuleStates.length; i++){
-      swerveModuleStates[i] = SwerveModuleState.optimize(swerveModuleStates[i], 
-                                                            new Rotation2d(swerveModules[i].getCANCoderReading()));
+      swerveModuleStates[i].optimize(new Rotation2d(swerveModules[i].getCANCoderReading()));
     }
   }
 
