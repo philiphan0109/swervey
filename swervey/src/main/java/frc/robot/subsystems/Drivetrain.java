@@ -29,54 +29,66 @@ public class Drivetrain extends SubsystemBase {
   private final Pigeon2 gyro;
   private double heading;
 
-
   public Drivetrain() {
-    frontLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_LEFT_MODULE_DRIVE_ID, RobotMap.FRONT_LEFT_MODULE_TURN_ID, RobotMap.FRONT_LEFT_MODULE_CANCODER_ID, 0);
-    frontRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_RIGHT_MODULE_DRIVE_ID, RobotMap.FRONT_RIGHT_MODULE_TURN_ID, RobotMap.FRONT_RIGHT_MODULE_CANCODER_ID, 0);
-    backLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_LEFT_MODULE_DRIVE_ID, RobotMap.BACK_LEFT_MODULE_TURN_ID, RobotMap.BACK_LEFT_MODULE_CANCODER_ID, 0);
-    backRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_RIGHT_MODULE_DRIVE_ID, RobotMap.BACK_RIGHT_MODULE_TURN_ID, RobotMap.BACK_RIGHT_MODULE_CANCODER_ID, 0);
+    frontLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_LEFT_MODULE_DRIVE_ID,
+        RobotMap.FRONT_LEFT_MODULE_TURN_ID, RobotMap.FRONT_LEFT_MODULE_CANCODER_ID,
+        DriveConstants.kFrontLeftCancoderOffset);
+    frontRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.FRONT_RIGHT_MODULE_DRIVE_ID,
+        RobotMap.FRONT_RIGHT_MODULE_TURN_ID, RobotMap.FRONT_RIGHT_MODULE_CANCODER_ID,
+        DriveConstants.kFrontRightCancoderOffset);
+    backLeftModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_LEFT_MODULE_DRIVE_ID,
+        RobotMap.BACK_LEFT_MODULE_TURN_ID, RobotMap.BACK_LEFT_MODULE_CANCODER_ID,
+        DriveConstants.kBackLeftCancoderOffset);
+    backRightModule = new SwerveModule(RobotMap.CANIVORE_NAME, RobotMap.BACK_RIGHT_MODULE_DRIVE_ID,
+        RobotMap.BACK_RIGHT_MODULE_TURN_ID, RobotMap.BACK_RIGHT_MODULE_CANCODER_ID,
+        DriveConstants.kBackRightCancoderOffset);
 
-    swerveModules = new SwerveModule[] {frontLeftModule, frontRightModule, backLeftModule, backRightModule};
-    swerveModulePositions = new SwerveModulePosition[] {frontLeftModule.getPosition(), frontRightModule.getPosition(), backLeftModule.getPosition(), backRightModule.getPosition()};
+    swerveModules = new SwerveModule[] { frontLeftModule, frontRightModule, backLeftModule, backRightModule };
+    swerveModulePositions = new SwerveModulePosition[] { frontLeftModule.getPosition(), frontRightModule.getPosition(),
+        backLeftModule.getPosition(), backRightModule.getPosition() };
     swerveModuleStates = DriveConstants.kinematics.toSwerveModuleStates(new ChassisSpeeds(0, 0, 0));
 
     gyro = new Pigeon2(RobotMap.GYRO_ID, RobotMap.CANIVORE_NAME);
     gyro.setYaw(0);
   }
 
-  public static Drivetrain getInstance(){
-    if(instance == null) {
+  public static Drivetrain getInstance() {
+    if (instance == null) {
       instance = new Drivetrain();
     }
     return instance;
   }
 
-  public void updateModulePositions(){
-    for(int i = 0; i < swerveModulePositions.length; i++){
+  public void updateModulePositions() {
+    for (int i = 0; i < swerveModulePositions.length; i++) {
       swerveModulePositions[i] = swerveModules[i].getPosition();
     }
   }
 
-  public void setSwerveModuleStates(SwerveModuleState[] desiredModuleStates){
-    for(int i = 0; i < desiredModuleStates.length; i++){
+  public void setSwerveModuleStates(SwerveModuleState[] desiredModuleStates) {
+    for (int i = 0; i < desiredModuleStates.length; i++) {
       swerveModules[i].setDesiredState(desiredModuleStates[i]);
     }
   }
 
-  public double getHeading(){
+  public double getHeading() {
     heading = -gyro.getYaw().getValueAsDouble();
     return Math.IEEEremainder(heading, 360);
   }
 
-  public Rotation2d getHeadingAsRotation2d(){
+  public void resetGyro(){
+    gyro.reset();
+  }
+
+  public Rotation2d getHeadingAsRotation2d() {
     return gyro.getRotation2d();
   }
 
-  public void drive(Translation2d translation, double rotation, boolean fieldOriented, Translation2d centerOfRotation){
+  public void drive(Translation2d translation, double rotation, boolean fieldOriented, Translation2d centerOfRotation) {
     ChassisSpeeds fieldRelativeSpeeds = new ChassisSpeeds(translation.getX(), translation.getY(), rotation);
 
     ChassisSpeeds robotRelativeSpeeds;
-    if(fieldOriented){
+    if (fieldOriented) {
       robotRelativeSpeeds = ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getHeadingAsRotation2d());
     } else {
       robotRelativeSpeeds = fieldRelativeSpeeds;
@@ -88,13 +100,11 @@ public class Drivetrain extends SubsystemBase {
     setSwerveModuleStates(swerveModuleStates);
   }
 
-  public void optimizeModuleStates(){
-    for(int i = 0; i < swerveModuleStates.length; i++){
+  public void optimizeModuleStates() {
+    for (int i = 0; i < swerveModuleStates.length; i++) {
       swerveModuleStates[i].optimize(new Rotation2d(swerveModules[i].getCANCoderReading()));
     }
   }
-
-
 
   @Override
   public void periodic() {

@@ -9,11 +9,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -28,8 +32,10 @@ public final class Constants {
     public static final double kWheelDiameterInches = 4.0; // placeholder value
 
     public static final double kDriveMotorReduction = 6.12; // placeholder value
-    public static final double kDriveEncoderPositionFactor = (Math.PI * Units.inchesToMeters(kWheelDiameterInches)) / kDriveMotorReduction;
-    public static final double kDriveEncoderVelocityFactor = (Math.PI * Units.inchesToMeters(kWheelDiameterInches)) / kDriveMotorReduction;
+    public static final double kDriveEncoderPositionFactor = (Math.PI * Units.inchesToMeters(kWheelDiameterInches))
+        / kDriveMotorReduction;
+    public static final double kDriveEncoderVelocityFactor = (Math.PI * Units.inchesToMeters(kWheelDiameterInches))
+        / kDriveMotorReduction;
 
     public static final double kSteerMotorReduction = 150.0 / 7.0;
 
@@ -55,19 +61,26 @@ public final class Constants {
     public static final double kTrackWidth = 2.0;
     public static final double kWheelBase = 2.0;
 
+    public static final double kMaxFloorSpeed = 5.0;
+
     public static final Translation2d[] swerveModuleLocations = {
-      new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
-      new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
-      new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
-      new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0),
+        new Translation2d(kWheelBase / 2.0, kTrackWidth / 2.0),
+        new Translation2d(kWheelBase / 2.0, -kTrackWidth / 2.0),
+        new Translation2d(-kWheelBase / 2.0, kTrackWidth / 2.0),
+        new Translation2d(-kWheelBase / 2.0, -kTrackWidth / 2.0),
     };
 
     public static final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(
-      swerveModuleLocations[0],
-      swerveModuleLocations[1],
-      swerveModuleLocations[2],
-      swerveModuleLocations[3]
-    );
-    
+        swerveModuleLocations[0],
+        swerveModuleLocations[1],
+        swerveModuleLocations[2],
+        swerveModuleLocations[3]);
+
+    public static final double kFrontLeftCancoderOffset = -2.934505247225232;
+    public static final double kBackLeftCancoderOffset = -2.060136;
+
+    public static final double kFrontRightCancoderOffset = 3.313392;
+    public static final double kBackRightCancoderOffset = -1.992641;
+
   }
 }
